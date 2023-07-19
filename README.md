@@ -1,10 +1,14 @@
 # An end-to-end data pipeline for housing market analysis using Rightmove
 
+Problem/business statement: We want to extract data from Rightmove.com to analyse the trends in the rental costs of 2-bed properties in South West London. In particular, we want to analyse trends over time and geographically within the SW London area.
+
+In this project, I have used Selenium to get data from the Rightmove webpage. I then load it into a relational database (SQL Server on AWS RDS) with a normalised, orthogonal data maodel. Following this, I will use the data in the database to build a dashboard for analysis.
+
 ## Extract
 
 Webscraping using Selenium in python.
 
-- Class `Data` used to store the data.
+- Class `Data` used to temporarily store the data upon extraction and hold all the necessary functionality to tranform the data before loading into our relational database.
     - Method `add_page_data(driver)` used to add data from the current webpage, given the selenium `driver` (using Chrome driver).
 
 Currently we are scraping from this base url: <https://www.rightmove.co.uk/property-to-rent/find.html?locationIdentifier=REGION%5E92829&maxBedrooms=2&minBedrooms=2&propertyTypes=&includeLetAgreed=false&mustHave=&dontShow=&furnishTypes=&keywords=>  
@@ -46,6 +50,12 @@ WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CLASS_NAME, '
 
 ## Transform
 
-- The price is in the text form "£x,xxx pcm" where x are numbers. We add a method to our `Data` class, `.transform_prices()` which transforms the `prices` attribute from a list of strings into a list of integers (without "£", " pcm" and commas).
-- The location given on the rightmove page is inconsistent and often without a postcode :angry:. For now, we use the [bing maps api](https://learn.microsoft.com/en-us/bingmaps/rest-services/locations/find-a-location-by-query). This allows us to pass the address scraped to get info such as the postcodes. However, the api doesn't always return a postcode in the json response (maybe try a different api if it becomes a problem - google looks promising but requires card details). So far, it has seemed to always return coordinates. So we are adding postcodes where possible and adding geolocation coordiantes (latitude and longitude) to all properties. The method `transform_location_data(self)` is added to the `Data` class to fill in the geolocation attributes.
+- The price is in the text form "£X,XXX pcm" where X are numbers. We add a method to our `Data` class, `.transform_prices()` which transforms the `prices` attribute from a list of strings into a list of integers (without "£", " pcm" and commas).
+- The location given on the rightmove page is inconsistent and often without a postcode :angry:. For now, we use the [bing maps api](https://learn.microsoft.com/en-us/bingmaps/rest-services/locations/find-a-location-by-query). This allows us to pass the address scraped to get info such as the postcodes. However, the api doesn't always return a postcode in the json response (maybe try a different api if it becomes a problem - google looks promising but requires card details). So far, it has seemed to always return coordinates. So we are adding postcodes where possible and adding geolocation coordiantes (latitude and longitude) to all properties. The method `transform_location_data(self)` is added to the `Data` class to fill in the geolocation attributes. We also add ' London, UK' to the address search to remove potential ambiguity.
 - We add a method `make_df` to the `Data` class which returns a dataframe of all of the data. This can then be used to load into the database.
+
+# to add:
+- data: current date
+- transformations: zip into list of tuples for the odbc cursor method.
+- rounding coords, removing "prop" from id and turning to integer - ensure that the data adhere's to the restrictions imposed in the database
+- Loading section: pyodbc, used cte and subquery to load the data into a cte and then load into the table referencing cte in subquery to ensure that we only load new data i.e. obey primary key constraint.

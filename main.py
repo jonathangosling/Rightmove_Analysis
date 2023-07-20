@@ -121,4 +121,4 @@ final_size = load.get_table_size(conn, "dbo.SPY_price")
 Logger.info(f"{final_size-initial_size} items loaded.")
 
 conn.close()
-Logger.info("Closed connection to database ...")
+Logger.info("Closed connection to database.")

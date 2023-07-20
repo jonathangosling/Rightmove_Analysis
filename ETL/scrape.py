@@ -29,7 +29,29 @@ class Data:
             self.prices.append(property.find_element(By.CLASS_NAME, "propertyCard-priceValue").text)
             self.address.append(property.find_element(By.CLASS_NAME, "propertyCard-address").get_attribute('title'))
 
-    def transform_location_data(self, logger):
+    def transform_location_data_google(self, logger):
+        self.postcodes = []
+        self.latitudes = []
+        self.longitudes = []
+        logger.info("Accessing the google maps api and getting location data ...")
+        for addy in self.address:
+            addy = addy + ", London, UK"
+            addy = addy.replace(' ', '%20')
+            r = requests.get(rf'https://maps.googleapis.com/maps/api/geocode/json?address={addy}&key={credentials.googlemaps_api_key}')
+            if r.status_code >= 300:
+                logger.error(f"Unable to access google maps api. Status code {r.status_code} ...")
+                raise Exception(r.reason)
+            result = r.json()['results']
+            postcode_obtained = False
+            for comp in result[0]['address_components']:
+                if "postal_code" in comp['types'][0]:
+                    self.postcodes.append(comp["long_name"])
+            if not postcode_obtained:
+                self.postcodes.append(None)
+            self.latitudes.append(result[0]['geometry']['location']['lat'])
+            self.longitudes.append(result[0]['geometry']['location']['lng'])
+
+    def transform_location_data_bing(self, logger):
         self.postcodes = []
         self.latitudes = []
         self.longitudes = []
@@ -47,6 +69,7 @@ class Data:
                 self.postcodes.append(None)
             self.latitudes.append(r.json()['resourceSets'][0]['resources'][0]['geocodePoints'][0]['coordinates'][0])
             self.longitudes.append(r.json()['resourceSets'][0]['resources'][0]['geocodePoints'][0]['coordinates'][1])
+
 
     def transform_prices(self):
         self.prices = [int(price[1:-4].replace(',','')) for price in self.prices]
@@ -100,6 +123,6 @@ def transform(data, logger):
     logger.info("Transforming prices ...")
     data.transform_prices()
     logger.info("Transforming prices complete. Transforming locations ...")
-    data.transform_location_data(logger)
+    data.transform_location_data_google(logger)
     logger.info("Transforming location complete.")
             

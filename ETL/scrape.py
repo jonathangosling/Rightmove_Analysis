@@ -39,13 +39,14 @@ class Data:
             addy = addy.replace(' ', '%20')
             r = requests.get(rf'https://maps.googleapis.com/maps/api/geocode/json?address={addy}&key={credentials.googlemaps_api_key}')
             if r.status_code >= 300:
-                logger.error(f"Unable to access google maps api. Status code {r.status_code} ...")
+                logger.error(f"Unable to access google maps api. Status code {r.status_code}.")
                 raise Exception(r.reason)
             result = r.json()['results']
             postcode_obtained = False
             for comp in result[0]['address_components']:
                 if "postal_code" in comp['types'][0]:
                     self.postcodes.append(comp["long_name"])
+                    postcode_obtained = True
             if not postcode_obtained:
                 self.postcodes.append(None)
             self.latitudes.append(result[0]['geometry']['location']['lat'])
@@ -61,7 +62,7 @@ class Data:
             addy = addy.replace(' ', '%20')
             r = requests.get(rf'https://dev.virtualearth.net/REST/v1/Locations?q={addy}&key={credentials.bingmaps_api_key}')
             if r.status_code >= 300:
-                logger.error(f"Unable to access bing maps api. Status code {r.status_code} ...")
+                logger.error(f"Unable to access bing maps api. Status code {r.status_code}.")
                 raise Exception(r.reason)
             try:
                 self.postcodes.append(r.json()['resourceSets'][0]['resources'][0]['address']['postalCode'])
@@ -81,7 +82,11 @@ class Data:
     def zip_property(self):
         ''''This method zips up all of the attributes needed to 
         insert into the property table in the database'''
-        return list(zip([int(id.replace('prop','')) for id in self.ids], self.address, self.postcodes, [round(lat, 8) for lat in self.latitudes], [round(lon, 8) for lon in self.longitudes]))
+        return list(zip([int(id.replace('prop','')) for id in self.ids], 
+                        self.address, 
+                        self.postcodes, 
+                        [round(lat, 8) for lat in self.latitudes], 
+                        [round(lon, 8) for lon in self.longitudes]))
     
     def zip_price(self, date_today):
         ''''This method zips up all of the attributes needed to 
@@ -93,7 +98,7 @@ def scrape(url, logger):
 
     logger.info("Going to url using Chrome Driver ...")
     driver.get(url)
-    logger.info("Website accessed ...")
+    logger.info("Website accessed.")
 
     time.sleep(2)
     accept_cookies_if_asked(driver)
@@ -115,7 +120,7 @@ def scrape(url, logger):
         button = driver.find_element(By.XPATH, "//button[@title='Next page']")
 
     driver.close()
-    logger.info(f"Scraping complete. {pages_scanned} pages scraped ...")
+    logger.info(f"Scraping complete. {pages_scanned} pages scraped.")
     return data
 
 def transform(data, logger):

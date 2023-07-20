@@ -9,7 +9,7 @@ logging.basicConfig(
     filemode="w", # here the value is 'w' for write, but the default is 'a' for append
     level=logging.INFO, # set our minumum level
     format=r'%(levelname)-10s --- %(asctime)s: %(message)s',
-    datefmt='%Y%m%d %H:%M:%S'
+    datefmt='%Y/%m/%d %H:%M:%S'
 )
 Logger = logging.getLogger()
 
@@ -27,7 +27,7 @@ cursor.execute(query)
 results = cursor.fetchall()
 cursor.close()
 previous_date = datetime.strptime(results[0][0], "%Y-%m-%d")
-Logger.info("Got the latest date of interest rate data and converted to string ...")
+Logger.info("Got the latest date of interest rate data and converted to string.")
 
 Logger.info("Zipping property data to tuples ...")
 property_tuples = data.zip_property()

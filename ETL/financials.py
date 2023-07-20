@@ -13,7 +13,7 @@ def access_url(url, logger):
     s.headers.update(headers)
     r = s.get(url)
     if r.status_code >= 300:
-        logger.error(f"Unable to access BankOfEngland endpoint. Status code {r.status_code} ...")
+        logger.error(f"Unable to access BankOfEngland endpoint. Status code {r.status_code} .")
         raise Exception(r.reason)
 
 def get_data_from_csv(url):

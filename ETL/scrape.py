@@ -2,10 +2,10 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC  
-import pandas as pd
 import time
-import requests
 import credentials
+import requests
+import pandas as pd
 
 def accept_cookies_if_asked(driver):
     try:
@@ -29,16 +29,17 @@ class Data:
             self.prices.append(property.find_element(By.CLASS_NAME, "propertyCard-priceValue").text)
             self.address.append(property.find_element(By.CLASS_NAME, "propertyCard-address").get_attribute('title'))
 
-    def transform_location_data(self):
+    def transform_location_data(self, logger):
         self.postcodes = []
         self.latitudes = []
         self.longitudes = []
+        logger.info("Accessing the bing maps api and getting location data ...")
         for addy in self.address:
             addy = addy + ", London, UK"
             addy = addy.replace(' ', '%20')
             r = requests.get(rf'https://dev.virtualearth.net/REST/v1/Locations?q={addy}&key={credentials.bingmaps_api_key}')
             if r.status_code >= 300:
-                print(r.status_code)
+                logger.error(f"Unable to access bing maps api. Status code {r.status_code} ...")
                 raise Exception(r.reason)
             try:
                 self.postcodes.append(r.json()['resourceSets'][0]['resources'][0]['address']['postalCode'])
@@ -64,9 +65,12 @@ class Data:
         insert into the price table in the database'''
         return [(int(id.replace('prop','')), str(date_today), self.prices[i]) for i, id in enumerate(self.ids)]
     
-def scrape(url):
+def scrape(url, logger):
     driver = webdriver.Chrome()
+
+    logger.info("Going to url using Chrome Driver ...")
     driver.get(url)
+    logger.info("Website accessed ...")
 
     time.sleep(2)
     accept_cookies_if_asked(driver)
@@ -77,6 +81,7 @@ def scrape(url):
 
     button = driver.find_element(By.XPATH, "//button[@title='Next page']")
 
+    logger.info("Looping through pages ...")
     while button.is_enabled():
         WebDriverWait(driver, 20).until(EC.element_to_be_clickable(button))
         button.click()
@@ -87,9 +92,14 @@ def scrape(url):
         button = driver.find_element(By.XPATH, "//button[@title='Next page']")
 
     driver.close()
-    return data, pages_scanned
-
-def transform(data):
-    data.transform_prices()
-    data.transform_location_data()
+    logger.info(f"Scraping complete. {pages_scanned} pages scraped ...")
     return data
+
+def transform(data, logger):
+
+    logger.info("Transforming prices ...")
+    data.transform_prices()
+    logger.info("Transforming prices complete. Transforming locations ...")
+    data.transform_location_data(logger)
+    logger.info("Transforming location complete.")
+            

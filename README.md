@@ -59,3 +59,4 @@ WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CLASS_NAME, '
 - transformations: zip into list of tuples for the odbc cursor method.
 - rounding coords, removing "prop" from id and turning to integer - ensure that the data adhere's to the restrictions imposed in the database
 - Loading section: pyodbc, used cte and subquery to load the data into a cte and then load into the table referencing cte in subquery to ensure that we only load new data i.e. obey primary key constraint.
+- Accessing the bank of england page first using requests to set cookies <https://stackoverflow.com/questions/70792547/fom-browser-a-csv-file-from-url-url-1-can-be-downloaded-only-if-another-url-of>

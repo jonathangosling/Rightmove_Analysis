@@ -16,3 +16,10 @@ CREATE TABLE price
 CONSTRAINT price_pk PRIMARY KEY ([prop_id], [date]),
 CONSTRAINT price_property_fk FOREIGN KEY (prop_id) REFERENCES dbo.property (prop_id)
 );
+
+CREATE TABLE interest_rates
+(
+[date] DATE NOT NULL,
+[IUMSOIA] DECIMAL(6,4) NOT NULL,
+CONSTRAINT interest_rates_pk PRIMARY KEY ([date])
+);

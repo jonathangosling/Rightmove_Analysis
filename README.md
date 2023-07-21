@@ -108,3 +108,5 @@ Table of data for the most recent/currently available properties:
 <img src="./diagrams/current_properties.png" width = "210"/>
 
 The SQL used to create the analytical tables is contained in /sql_snippets/create_dm_tables.sql
+
+## Dashboard

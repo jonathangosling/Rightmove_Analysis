@@ -74,6 +74,7 @@ WITH area_code_cte AS
 (
 SELECT
 prop.prop_id,
+prop.[address],
 prop.postcode,
 prop.latitude,
 prop.longitude,
@@ -90,6 +91,7 @@ WHERE price.[date] = (SELECT MAX([date]) FROM properties.dbo.price price)
 )
 SELECT
 prop_id,
+[address],
 postcode,
 latitude,
 longitude,
@@ -128,6 +130,7 @@ DROP TABLE IF EXISTS property_mart.dbo.current_properties;
 CREATE TABLE property_mart.dbo.current_properties
 (
 prop_id INT NOT NULL,
+[address] VARCHAR(100),
 postcode VARCHAR(10),
 latitude DECIMAL(10,8) NOT NULL,
 longitude DECIMAL(11,8) NOT NULL,
@@ -154,12 +157,12 @@ FROM property_fact_view;
 
 INSERT INTO current_properties
 (
-prop_id, postcode, 
-latitude, longitude, 
-area_code, price, [date]
+prop_id, [address], postcode
+latitude, longitude, area_code, 
+price, [date]
 )
 SELECT
-prop_id, postcode, 
-latitude, longitude, 
-area_code, price, [date]
+prop_id, [address], postcode,
+latitude, longitude, area_code, 
+price, [date]
 FROM current_properties_view;

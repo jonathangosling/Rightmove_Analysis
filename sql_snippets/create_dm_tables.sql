@@ -31,7 +31,13 @@ FROM area_code_cte
 WHERE EXISTS (SELECT 1 FROM properties.dbo.SW_area_codes t2 WHERE t2.area_code = area_code_cte.area_code)
 )
 -- finally, group by the date and area code and aggregate the price (median already aggregated above, just MIN to get the value)
-SELECT [date], area_code, CAST(AVG(price) AS INT) avg_price, CAST(MIN(median_price) AS INT) median_price FROM median_cte
+SELECT 
+[date], 
+area_code, 
+CAST(AVG(price) AS INT) avg_price, 
+CAST(MIN(median_price) AS INT) median_price, 
+COUNT(*) AS num_properties
+FROM median_cte
 GROUP BY [date], area_code;
 
 /*
@@ -53,7 +59,13 @@ ON price.prop_id = prop.prop_id
 -- group by the date and area code and aggregate the price (median already aggregated above, just MIN to get the value)
 -- we add a column for 'area_code' specifying 'all'. This means we can join with the area code aggregated table so that in
 -- analysis we can filter by specific area codes, or by all area codes, or just show everything!
-SELECT [date], 'all' area_code, CAST(AVG(price) AS INT) avg_price, CAST(MIN(median_price) AS INT) median_price FROM median_cte
+SELECT 
+[date], 
+'all' area_code, 
+CAST(AVG(price) AS INT) avg_price, 
+CAST(MIN(median_price) AS INT) median_price, 
+COUNT(*) AS num_properties
+FROM median_cte
 GROUP BY [date];
 
 /*
@@ -122,6 +134,7 @@ CREATE TABLE property_mart.dbo.property_fact
 area_code VARCHAR(5) NOT NULL,
 avg_price INT,
 median_price INT,
+num_properties INT,
 CONSTRAINT property_fact_pk PRIMARY KEY ([date], area_code),
 CONSTRAINT property_fact_date_dim_pk FOREIGN KEY ([date]) REFERENCES property_mart.dbo.date_dim ([date])
 )
@@ -150,14 +163,14 @@ SELECT
 FROM date_dim_view;
 
 INSERT INTO property_fact
-([date], area_code, avg_price, median_price)
+([date], area_code, avg_price, median_price, num_properties)
 SELECT
-[date], area_code, avg_price, median_price
+[date], area_code, avg_price, median_price, num_properties
 FROM property_fact_view;
 
 INSERT INTO current_properties
 (
-prop_id, [address], postcode
+prop_id, [address], postcode,
 latitude, longitude, area_code, 
 price, [date]
 )

@@ -110,3 +110,7 @@ Table of data for the most recent/currently available properties:
 The SQL used to create the analytical tables is contained in /sql_snippets/create_dm_tables.sql
 
 ## Dashboard
+
+<img src="./dashboard/page1.png" width = "900"/>
+
+<img src="./dashboard/page2.png" width = "900"/>

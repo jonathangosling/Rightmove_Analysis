@@ -115,10 +115,27 @@ price,
 [date]
 FROM area_code_cte;
 
+
+DROP TABLE IF EXISTS property_mart.dbo.property_fact;
 /* 
-Create tables
+Create static area code table
 */
-DROP TABLE IF EXISTS property_mart.dbo.date_dim
+CREATE TABLE property_mart.dbo.area_dim
+(
+[area_code] VARCHAR(4) NOT NULL,
+[district] VARCHAR(15) NOT NULL,
+ CONSTRAINT area_dim_pk PRIMARY KEY ([area_code])
+)
+
+INSERT INTO property_mart.dbo.area_dim
+SELECT * FROM properties.dbo.SW_area_codes;
+
+INSERT INTO property_mart.dbo.area_dim
+([area_code], [district]) VALUES ('all', 'all districts');
+
+/* 
+Create tables varying (to be updated with time-varying data) tables
+*/
 CREATE TABLE property_mart.dbo.date_dim
 (
 [date] DATE NOT NULL,
@@ -127,24 +144,16 @@ CREATE TABLE property_mart.dbo.date_dim
 CONSTRAINT date_dim_pk PRIMARY KEY ([date])
 );
 
-DROP TABLE IF EXISTS property_mart.dbo.area_dim
-CREATE TABLE property_mart.dbo.area_dim
-(
-[area_code] VARCHAR(4) NOT NULL,
-[district] VARCHAR(15) NOT NULL,
-CONSTRAINT SW_area_codes_pk PRIMARY KEY (area_code)
-);
-
-DROP TABLE IF EXISTS property_mart.dbo.property_fact;
 CREATE TABLE property_mart.dbo.property_fact
 (
 [date] DATE NOT NULL,
-area_code VARCHAR(5) NOT NULL,
+area_code VARCHAR(4) NOT NULL,
 avg_price INT,
 median_price INT,
 num_properties INT,
 CONSTRAINT property_fact_pk PRIMARY KEY ([date], area_code),
-CONSTRAINT property_fact_date_dim_pk FOREIGN KEY ([date]) REFERENCES property_mart.dbo.date_dim ([date])
+CONSTRAINT property_fact_date_dim_fk FOREIGN KEY ([date]) REFERENCES property_mart.dbo.date_dim ([date]),
+CONSTRAINT property_fact_area_dim_pk FOREIGN KEY ([area_code]) REFERENCES property_mart.dbo.area_dim ([area_code])
 )
 
 DROP TABLE IF EXISTS property_mart.dbo.current_properties;

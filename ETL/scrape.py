@@ -1,7 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC  
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
 import time
 import credentials
 import requests
@@ -94,7 +95,14 @@ class Data:
         return [(int(id.replace('prop','')), str(date_today), self.prices[i]) for i, id in enumerate(self.ids)]
     
 def scrape(url, logger):
-    driver = webdriver.Chrome()
+    options = Options()
+    options.add_argument("start-maximized")
+    options.add_argument("disable-infobars")
+    options.add_argument("--disable-extensions")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--no-sandbox")
+    options.add_argument('--headless')
+    driver = webdriver.Chrome(options=options)
 
     logger.info("Going to url using Chrome Driver ...")
     driver.get(url)

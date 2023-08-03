@@ -7,13 +7,17 @@ def load_data(conn, query, data):
     cursor.commit()
     cursor.close()
 
-def connect_to_db():
-    conn = pyodbc.connect('Driver={SQL Server};'
-                  'Server='+credentials.db_endpoint+';'
-                  'Database='+credentials.db_database+';'
-                  'UID='+credentials.db_user+';'
-                  'PWD='+credentials.db_password+';'
-                  'Trusted_Connection=no;')
+def connect_to_db(ODBC_Driver, database = None):
+    connection_string = 'Driver={'+ODBC_Driver+'};'+\
+                        'Server='+credentials.db_endpoint+';'+\
+                        'UID='+credentials.db_user+';'+\
+                        'PWD='+credentials.db_password+';'+\
+                        'Trusted_Connection=no;'
+    
+    if database:
+        connection_string = connection_string + 'Database='+credentials.db_database+';'
+
+    conn = pyodbc.connect(connection_string)
     return conn
 
 def get_table_size(conn, table_name):

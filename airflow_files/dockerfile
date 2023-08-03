@@ -1,0 +1,31 @@
+FROM apache/airflow:2.6.3
+
+CMD mkdir -p /custom_packages
+COPY main.py /custom_packages/main.py
+COPY credentials.py /custom_packages/credentials.py
+COPY ETL /custom_packages/ETL
+COPY requirements.txt /requirements.txt
+
+RUN pip install -r /requirements.txt
+
+USER root
+WORKDIR /tmp
+RUN apt-get clean
+RUN apt-get update
+RUN apt-get install -y vim
+RUN apt-get install -y wget
+RUN apt-get install -y unzip
+RUN apt-get install -y xvfb
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN apt-get install ./google-chrome-stable_current_amd64.deb -y
+
+RUN wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
+RUN unzip chromedriver_linux64.zip
+RUN mv chromedriver /usr/bin/chromedriver
+
+RUN wget https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
+RUN curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list
+RUN apt-get update
+RUN ACCEPT_EULA=Y apt-get install -y msodbcsql17
+
+WORKDIR /opt/airflow

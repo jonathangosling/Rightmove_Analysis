@@ -27,8 +27,23 @@ CONSTRAINT interest_rates_pk PRIMARY KEY ([date])
 CREATE TABLE SW_area_codes
 (
 [area_code] VARCHAR(4) NOT NULL,
+[district] VARCHAR(15) NOT NULL,
 CONSTRAINT SW_area_codes_pk PRIMARY KEY (area_code)
 );
 
 INSERT INTO SW_area_codes
-(area_code) VALUES ('SW2'), ('SW4'), ('SW8'), ('SW9'), ('SW11'), ('SW12'), ('SW13'), ('SW14'), ('SW15'), ('SW16'), ('SW17'), ('SW18'), ('SW19'), ('SW20');
+(area_code, district) VALUES  ('SW2', 'Brixton'), 
+							  ('SW4', 'Clapham'), 
+							  ('SW8', 'South Lambeth'), 
+							  ('SW9', 'Stockwell'), 
+							  ('SW11', 'Battersea'), 
+							  ('SW12', 'Balham'), 
+							  ('SW13', 'Barnes'), 
+							  ('SW14', 'Mortlake'), 
+							  ('SW15', 'Putney'), 
+							  ('SW16', 'Streatham'), 
+							  ('SW17', 'Tooting'), 
+							  ('SW18', 'Wandsworth'), 
+							  ('SW19', 'Wimbledon'), 
+							  ('SW20', 'West Wimbledon');
+

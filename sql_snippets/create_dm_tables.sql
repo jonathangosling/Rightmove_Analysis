@@ -125,7 +125,15 @@ CREATE TABLE property_mart.dbo.date_dim
 [month] VARCHAR(10) NOT NULL,
 [year] INT NOT NULL,
 CONSTRAINT date_dim_pk PRIMARY KEY ([date])
-)
+);
+
+DROP TABLE IF EXISTS property_mart.dbo.area_dim
+CREATE TABLE property_mart.dbo.area_dim
+(
+[area_code] VARCHAR(4) NOT NULL,
+[district] VARCHAR(15) NOT NULL,
+CONSTRAINT SW_area_codes_pk PRIMARY KEY (area_code)
+);
 
 DROP TABLE IF EXISTS property_mart.dbo.property_fact;
 CREATE TABLE property_mart.dbo.property_fact

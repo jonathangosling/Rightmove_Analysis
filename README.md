@@ -70,7 +70,7 @@ The function `get_spy_price()` uses the [yfinance](https://pypi.org/project/yfin
 
 ## Transform
 
-- The price is in the text form "£X,XXX pcm" where X are numbers. We add a method to our `Data` class, `.transform_prices()` which transforms the `prices` attribute from a list of strings into a list of integers (without "£", " pcm" and commas).
+- The rental price is in the text form "£X,XXX pcm" where X are numbers. We add a method to our `Data` class, `.transform_prices()` which transforms the `prices` attribute from a list of strings into a list of integers (without "£", " pcm" and commas).
 - The location given on the rightmove page is inconsistent and often without a postcode :angry:. For now, we use the [bing maps api](https://learn.microsoft.com/en-us/bingmaps/rest-services/locations/find-a-location-by-query). This allows us to pass the address scraped to get info such as the postcodes. However, the api doesn't always return a postcode in the json response (maybe try a different api if it becomes a problem - google looks promising but requires card details). So far, it has seemed to always return coordinates. So we are adding postcodes where possible and adding geolocation coordiantes (latitude and longitude) to all properties. The method `transform_location_data_bing()` is added to the `Data` class to fill in the geolocation attributes. We also add ' London, UK' to the address search to remove potential ambiguity.
   - A new method `transform_location_data_google()` has now been added to use the [google maps api](https://developers.google.com/maps/documentation/geocoding/overview). This appears to provide better results. It does still get the wrong address sometimes, but only seems to error when there are similar addresses elsewhere in London - hence the addition of ' London, UK' to the address search is effective. The response from the google api is slightly unhelpful in that the postcode identifier ("postal_code") is not a key but rather a value in a list. So we have to loop through components until we find the postcode identifier, if it exists, for each property.
 - The methods `zip_properties()` and `zip_price()` to the `Data` class return a list of tuples of the data required to load into the tables, as required for use of the pyodbc driver. The current date is added along with the price data.
@@ -98,6 +98,8 @@ Misc tables - Finance tables and area codes for SW London (used to filter addres
 <img src="./diagrams/misc_tables.png" width = "700"/>
 
 ### Data-mart/analytical table (to be loaded into dataviz tools)
+
+The purpose of the data-mart is to take away some if the burden of performing aggregations in PowerBI and, more importantly, to limit the amount of data we have to load into PowerBI - saving (a) having to load large amounts of data or (b) having to direct query the database.
 
 Aggregated historical price data:
 

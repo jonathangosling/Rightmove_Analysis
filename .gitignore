@@ -5,6 +5,9 @@ credentials.py
 log_file.txt
 airflow_files/logs/
 
+# jupyter notbook
+notebook_tests.ipynb
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

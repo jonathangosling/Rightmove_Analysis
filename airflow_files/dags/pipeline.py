@@ -4,13 +4,13 @@ from datetime import datetime, timedelta
 import main
 
 ODBC_Driver = 'ODBC Driver 17 for SQL Server'
-schema = 'test'
+schema = 'dbo'
 
 def first_ETL():
     main.ETL_to_database(ODBC_Driver = ODBC_Driver, schema = schema)
 
 def second_ETL():
-    main.ETL_to_mart(ODBC_Driver = ODBC_Driver, schema = 'dbo')
+    main.ETL_to_mart(ODBC_Driver = ODBC_Driver, schema = schema)
 
 default_args = {
     'owner': 'jonathangosling',

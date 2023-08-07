@@ -190,7 +190,7 @@ Let's go through the steps:
 
 1. Create a dockerfile to extend the base airflow image.
 2. The docker-compose.yaml file currently uses the `apache/airflow:2.6.3` base image (i.e. `image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.6.3}` in the yaml file). We want to replace this with our own image (lets say `extending_airflow:latest`), which we have yet to build.
-3. In the dockerfile: 
+3. In the dockerfile:
    - Use the airflow image: `FROM apache/airflow:2.6.3`
    - Make a directory for custom packages: `CMD mkdir -p /custom_packages`
    - `COPY` custom python packages/modules in. This includes `main.py` as we will be using it as a module here, since it'll be our dag python files that will be executed.
@@ -244,3 +244,15 @@ NOTES:
 - Need to make sure ODBC version is compatible with the ubuntu/linux version. When running docker image in terminal: `lsb_release -a`
 - To find the name of the ODBC driver (to be passed into the pyodb.connect() method): run docker image - `sudo vim /etc/odbcinst.ini` - this is the ODBC driver configuration file. Find the name/path of the driver. It is "/opt/microsoft/msodbcsql17/lib64/libmsodbcsql-17.10.so.4.1" for MS ODBC 17, or can use the name tagged at the top of the configuration file (ODBC Driver 17 for SQL Server).
 - ODBC 18 has [breaking changes](https://techcommunity.microsoft.com/t5/sql-server-blog/odbc-driver-18-0-for-sql-server-released/ba-p/3169228). It now sets encrypt to yes by default. It used to be set to false. Our local pc uses an older version where encrypt is false and our code is set accordingly. To match our development environment, we install ODBC 17. If using ODBC 18, it seems that in the pyodbc.connect() method sting you would want to set 'Trusted_Connection=yes;' and install relevant CA certificates.
+- Running selenium via chrome driver in the docker container for airflow seems to cause some issues. We can overcome the errors by adding some options to the dirver (in the scrape.scrape() function) - see more [here](https://stackoverflow.com/questions/50642308/webdriverexception-unknown-error-devtoolsactiveport-file-doesnt-exist-while-t).
+  
+```python
+options = Options()
+options.add_argument("start-maximized")
+options.add_argument("disable-infobars")
+options.add_argument("--disable-extensions")
+options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--no-sandbox")
+options.add_argument('--headless')
+driver = webdriver.Chrome(options = options)
+```

@@ -115,11 +115,11 @@ After extracting and transforming, the data is loaded into the SQL Server databa
 
 Properties and prices tables:
 
-<img src="./diagrams/properties_prices.png" width = "140"/>
+<img src="./diagrams/tables/properties_prices.png" width = "140"/>
 
 Misc tables - Finance tables and area codes for SW London (used to filter address' where the API was mistaken):
 
-<img src="./diagrams/misc_tables.png" width = "500"/>
+<img src="./diagrams/tables/misc_tables.png" width = "500"/>
 
 ### Data-mart/analytical table (to be loaded into dataviz tools)
 
@@ -127,11 +127,11 @@ The purpose of the data-mart is to take away some if the burden of performing ag
 
 Aggregated historical price data:
 
-<img src="./diagrams/properties_star.png" width = "700"/>
+<img src="./diagrams/tables/properties_star.png" width = "700"/>
 
 Table of data for the most recent/currently available properties:
 
-<img src="./diagrams/current_properties.png" width = "145"/>
+<img src="./diagrams/tables/current_properties.png" width = "145"/>
 
 - The SQL used to create the analytical tables is contained in /sql_snippets/create_dm_tables.sql
 - The SQL used to create the stored procedure to be executed to update the analytical tables with new data is in /sql_snippets/create_procedure.sql 
@@ -224,7 +224,6 @@ By default, the interpreter looks for a module within the current directory. It 
 
 1. Initialize the database for airflow (airflow needs a database to store metadata about configuration, users/roles and task runs - this has nothing to do with our SQL Server database - in fact you can see from the docker-compose.yaml that we are using a postgresql dababase image for our airflow metadata database). To do this, from the airflow_files directory, run `docker-compose up airflow-init`. This will download all necessary docker images, set up the volume and airflow_files containers and set up a user with username and password 'airflow'.
 2. Start all the services (run the containers): `docker compose up -d`. The `-d` flag will run the containers in 'detached mode' - allowing us to run them in the background. Should see that a postgres, scheduler, triggerer and webserver container are all up and running - can check by running `docker ps`.
-3. Access the portal on localhost:8080, sign in as 'airflow', unpause the DAG and away you go.
 
 Quick summary:
 
@@ -236,6 +235,18 @@ docker compose up -d
 ### Shut down airflow
 
 1. Use command `docker-compose down -v` to stop the containers and remove them. The flag `-v ` all removes the volumes.
+
+### The Airflow UI
+
+Once running, the airflow UI can be accessed on localhost:8080. Sign in as 'airflow', unpause the DAG and away you go.
+
+Within the UI, you can manage your DAGs, users & roles, variables & connections are various other bits. The connections tab is particularly useful for connecting to a database using 'airflow hooks', rather than adding credentials to your docker image (see [this tutorial](https://www.youtube.com/watch?v=rcG4WNwi900&list=PLwFJcsJ61oujAqYpMp1kdUBcPG0sE0QMT&index=14)).
+
+You can also trigger the DAGs manually, view logs (!) and check the schedule. Here's a couple of screenshots from our DAG:
+
+<img src="./diagrams/airflow_screenshots/airflow_graph.png" width = "700"/>
+
+<img src="./diagrams/airflow_screenshots/airflow_calendar.png" width = "700"/>
 
 NOTES:
 

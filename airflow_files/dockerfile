@@ -1,13 +1,5 @@
 FROM apache/airflow:2.6.3
 
-#CMD mkdir -p /custom_packages
-COPY main.py /custom_packages/main.py
-COPY credentials.py /custom_packages/credentials.py
-COPY ETL /custom_packages/ETL
-COPY requirements.txt /requirements.txt
-
-RUN pip install -r /requirements.txt
-
 USER root
 WORKDIR /tmp
 RUN apt-get clean
@@ -27,5 +19,14 @@ RUN wget https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/t
 RUN curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list
 RUN apt-get update
 RUN ACCEPT_EULA=Y apt-get install -y msodbcsql17
+
+
+USER airflow
+COPY requirements.txt /requirements.txt
+RUN pip install -r /requirements.txt
+
+COPY main.py /custom_packages/main.py
+COPY credentials.py /custom_packages/credentials.py
+COPY ETL /custom_packages/ETL
 
 WORKDIR /opt/airflow

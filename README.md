@@ -166,7 +166,7 @@ Whenever you want to update the analysis, you can execute the stored procedure i
 
 ## Operating the Pipeline Automatically with Apache Airflow
 
-We also include functionality to allow the pipeline to be executed automatically, on a schedule, using apache airflow. See [this tutoral](https://www.youtube.com/watch?v=K9AnJ9_ZAXE).
+We also include functionality to allow the pipeline to be executed automatically, on a schedule, using apache airflow. See [this handy tutorial](https://www.youtube.com/watch?v=K9AnJ9_ZAXE) on airflow.
 
 Airflow is very often run in docker containers. Apache provide base images, making it easy to get started with a preconfigured environment. This is particularly useful as airflow doesn't seem to work with windows environments, though you can use WSL. See [this article](https://www.freecodecamp.org/news/install-apache-airflow-on-windows-without-docker/).
 
@@ -254,6 +254,7 @@ NOTES:
 - Need to make sure ODBC version is compatible with the ubuntu/linux version. When running docker image in terminal: `lsb_release -a`
 - To find the name of the ODBC driver (to be passed into the pyodb.connect() method): run docker image - `sudo vim /etc/odbcinst.ini` - this is the ODBC driver configuration file. Find the name/path of the driver. It is "/opt/microsoft/msodbcsql17/lib64/libmsodbcsql-17.10.so.4.1" for MS ODBC 17, or can use the name tagged at the top of the configuration file (ODBC Driver 17 for SQL Server).
 - ODBC 18 has [breaking changes](https://techcommunity.microsoft.com/t5/sql-server-blog/odbc-driver-18-0-for-sql-server-released/ba-p/3169228). It now sets encrypt to yes by default. It used to be set to false. Our local pc uses an older version where encrypt is false and our code is set accordingly. To match our development environment, we install ODBC 17. If using ODBC 18, it seems that in the pyodbc.connect() method sting you would want to set 'Trusted_Connection=yes;' and install relevant CA certificates.
+- Due to some of the hefty installations carried out in the docker image (chrome, chromedriver, msODBC etc.), the build process can take some time. To make use of layer caching when making changes to the source code (i.e. the code in our /custom_packages directory in the docker image), we place the software installations earlier in the dockerfile. Check [this video](https://www.youtube.com/watch?v=_nMpndIyaBU) from the docker crash course.
 - Running selenium via chrome driver in the docker container for airflow seems to cause some issues. We can overcome the errors by adding some options to the dirver (in the scrape.scrape() function) - see more [here](https://stackoverflow.com/questions/50642308/webdriverexception-unknown-error-devtoolsactiveport-file-doesnt-exist-while-t).
   
 ```python

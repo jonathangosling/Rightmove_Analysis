@@ -1,6 +1,6 @@
 FROM apache/airflow:2.6.3
 
-CMD mkdir -p /custom_packages
+#CMD mkdir -p /custom_packages
 COPY main.py /custom_packages/main.py
 COPY credentials.py /custom_packages/credentials.py
 COPY ETL /custom_packages/ETL

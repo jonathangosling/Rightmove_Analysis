@@ -192,8 +192,7 @@ Let's go through the steps:
 2. The docker-compose.yaml file currently uses the `apache/airflow:2.6.3` base image (i.e. `image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.6.3}` in the yaml file). We want to replace this with our own image (lets say `extending_airflow:latest`), which we have yet to build.
 3. In the dockerfile:
    - Use the airflow image: `FROM apache/airflow:2.6.3`
-   - Make a directory for custom packages: `CMD mkdir -p /custom_packages`
-   - `COPY` custom python packages/modules in. This includes `main.py` as we will be using it as a module here, since it'll be our dag python files that will be executed.
+   - `COPY` custom python packages/modules into a new directory `/custom_packages`. This includes `main.py` as we will be using it as a module here, since it'll be our dag python files that will be executed.
    - `COPY` requirements.txt and `RUN pip install -r /requirements.txt` to install python dependencies
    - `USER root` to perform operations
    - `WORKDIR /tmp` to download install files to tmp directory, rather than cluttering the working directory.

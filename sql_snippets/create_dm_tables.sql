@@ -39,6 +39,7 @@ CAST(MIN(median_price) AS INT) median_price,
 COUNT(*) AS num_properties
 FROM median_cte
 GROUP BY [date], area_code;
+GO
 
 /*
 Create view to calculate the median and mean price for each date for all properties
@@ -67,6 +68,7 @@ CAST(MIN(median_price) AS INT) median_price,
 COUNT(*) AS num_properties
 FROM median_cte
 GROUP BY [date];
+GO
 
 /*
 Join all aggregated properties view to area-specific view
@@ -76,6 +78,20 @@ AS
 SELECT * FROM property_area_fact_view
 UNION
 SELECT * FROM property_all_fact_view;
+GO
+
+/* 
+Create view for dates 
+*/
+CREATE OR ALTER VIEW date_dim_view
+AS
+WITH dates AS
+(
+SELECT DISTINCT([date]) [date] FROM properties.dbo.price
+)
+SELECT [date], DATENAME(MONTH, [date]) [month], DATENAME(YEAR, [date]) [year]
+FROM dates;
+GO
 
 /*
 Create view for snapshot of current properties
@@ -114,7 +130,7 @@ END AS area_code,
 price,
 [date]
 FROM area_code_cte;
-
+GO
 
 DROP TABLE IF EXISTS property_mart.dbo.property_fact;
 /* 

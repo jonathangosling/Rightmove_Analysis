@@ -23,6 +23,10 @@ SUPER EASY!!!! AWS RDS - [free tier](https://aws.amazon.com/rds/free/) :
 OR set up on your local machine: 
 - <https://learn.microsoft.com/en-us/sql/database-engine/install-windows/install-sql-server?view=sql-server-ver16>
 - <https://www.youtube.com/watch?v=835Zubb1vuU>
+- Notes:
+  - Default port is 1433. Will need to check inbound rules on your machine, e.g. in windows defender firewall for windows pc.
+  - Can check ip address and enable in 'Sql Server Configuration Manager'. Go to 'protocols for \<instance name (default is MSSQLSERVER)\>'. Enable TCP/IP and click to Check IP addresses and ports, under 'enabled' select 'yes' for e.g. IP10. Once configuration changed, restart the instance in the 'SQL Server Services' tab by right clicking and selecting 'restart'.
+  - When connecting, you can specify the port in the connection string: \<ip address\>,\<port\>
 
 ---
 

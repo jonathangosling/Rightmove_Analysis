@@ -19,7 +19,6 @@ def ETL_to_database(ODBC_Driver = "SQL Server", schema = 'dbo'):
     url = r'''https://www.rightmove.co.uk/property-to-rent/find.html?locationIdentifier=REGION%5E92829&maxBedrooms=2&minBedrooms=2&propertyTypes=&includeLetAgreed=false&mustHave=&dontShow=&furnishTypes=&keywords='''
 
     data = scrape.scrape(url, Logger)
-    print(data.prices)
     scrape.transform(data, Logger)
 
     Logger.info("Connecting to database to find the latest date of interest rate data ...")

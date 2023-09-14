@@ -21,7 +21,7 @@ default_args = {
 with DAG(
     default_args = default_args,
     dag_id = 'my_ETL_pipeline',
-    start_date = datetime(2023,8,1),
+    start_date = datetime(2023,8,29),
     schedule_interval = '0 13 * * Mon,Fri'
 ) as dag:
     task1 = PythonOperator(

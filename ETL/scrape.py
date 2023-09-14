@@ -3,6 +3,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import time
 import credentials
 import requests
@@ -101,8 +103,9 @@ def scrape(url, logger):
     options.add_argument("--disable-extensions")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--no-sandbox")
-    options.add_argument('--headless')
-    driver = webdriver.Chrome(options=options)
+    # options.add_argument('--headless')
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service,options=options)
 
     logger.info("Going to url using Chrome Driver ...")
     driver.get(url)

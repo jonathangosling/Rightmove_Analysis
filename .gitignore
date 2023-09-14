@@ -7,6 +7,7 @@ airflow_files/logs/
 
 # jupyter notbook
 notebook_tests.ipynb
+data_transfer.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -271,3 +271,7 @@ options.add_argument("--no-sandbox")
 options.add_argument('--headless')
 driver = webdriver.Chrome(options = options)
 ```
+
+## Updates
+
+September 2023 - ran into compatibility issues between Chrome and Chromedriver when running locally. Errors suggested that the chromedriver version was not compatible with current Chrome version. However, we had the latest chromedriver version. Added webdriver_manager to solve the issue as suggested [here](https://stackoverflow.com/questions/76727774/selenium-webdriver-chrome-115-stopped-working/76731553#76731553)

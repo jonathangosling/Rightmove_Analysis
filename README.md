@@ -193,7 +193,7 @@ Let's go through the steps:
 ### Extend Airflow Docker Image with Necessary Dependencies
 
 1. Create a dockerfile to extend the base airflow image.
-2. The docker-compose.yaml file currently uses the `apache/airflow:2.6.3` base image (i.e. `image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.6.3}` in the yaml file). We want to replace this with our own image (lets say `extending_airflow:latest`), which we have yet to build.
+2. The docker-compose.yaml file currently uses the `apache/airflow:2.6.3` base image (i.e. `image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.6.3}` in the yaml file). We want to replace this with our own image (lets say `extending_airflow:latest`), which we have yet to build. We could use `build: .` within the docker compose to build the docker image for the containers, using the dockerfile in the current directory. However, for quick restarting of the docker containers using `docker compose up`, we prebuild the image.
 3. In the dockerfile:
    - Use the airflow image: `FROM apache/airflow:2.6.3`
    - `COPY` custom python packages/modules into a new directory `/custom_packages`. This includes `main.py` as we will be using it as a module here, since it'll be our dag python files that will be executed.
@@ -274,4 +274,8 @@ driver = webdriver.Chrome(options = options)
 
 ## Updates
 
-September 2023 - ran into compatibility issues between Chrome and Chromedriver when running locally. Errors suggested that the chromedriver version was not compatible with current Chrome version. However, we had the latest chromedriver version. Added webdriver_manager to solve the issue as suggested [here](https://stackoverflow.com/questions/76727774/selenium-webdriver-chrome-115-stopped-working/76731553#76731553)
+September 2023:
+
+- Ran into compatibility issues between Chrome and Chromedriver when running locally. Errors suggested that the chromedriver version was not compatible with current Chrome version. However, we had the latest chromedriver version. Added webdriver_manager to solve the issue as suggested [here](https://stackoverflow.com/questions/76727774/selenium-webdriver-chrome-115-stopped-working/76731553#76731553)
+- The issue results from Chromes auto updates. Since chromedriver doesn't auto upload, you can quickly run into compatibility issues.
+- Can see from the logs that the webdriver manager checks for a compatible version of chromedriver, given the version of google-chrome. If there isn't one, it will get the most suitable (up-to-date) version and save it in the cache.
